@@ -112,11 +112,11 @@ func (f *Flatten) Get(key string) interface{} {
 	return flat
 }
 
-func (f *Flatten) All() map[string]interface{} {
+func (f *Flatten) All(withNamespace bool) map[string]interface{} {
 	result := map[string]interface{}{}
 
 	for key, value := range f.container {
-		if len(f.namespace) > 0 {
+		if len(f.namespace) > 0 && !withNamespace {
 			key = key[len(f.namespace)+1:]
 		}
 

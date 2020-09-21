@@ -1,4 +1,4 @@
-module github.com/edwsel/flatten-access
+module github.com/edwsel/flatten
 
 go 1.14
 

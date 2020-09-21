@@ -14,7 +14,7 @@ func TestFlatten_Add(t *testing.T) {
 
 	flat.Add("test.abs.1", "yep")
 
-	assert.Equal(t, flat.Get("test.abs.1"), "yep")
+	assert.Equal(t, "yep", flat.Get("test.abs.1"))
 }
 
 func TestFlatten_Delete(t *testing.T) {
@@ -26,7 +26,7 @@ func TestFlatten_Delete(t *testing.T) {
 
 	flat.Delete("test.abs.1")
 
-	assert.Equal(t, flat.Get("test.abs.1"), nil)
+	assert.Equal(t, nil, flat.Get("test.abs.1"))
 }
 
 func TestFlatten_Get(t *testing.T) {
@@ -46,8 +46,8 @@ func TestFlatten_Get(t *testing.T) {
 	}
 
 	assert.IsType(t, &Flatten{}, data.Get("test01.a"))
-	assert.Equal(t, data.Get("test"), "a")
-	assert.Equal(t, data.Get("test01.a.avt"), "hi")
+	assert.Equal(t, "a", data.Get("test"))
+	assert.Equal(t, "hi", data.Get("test01.a.avt"))
 }
 
 func TestFlatten_ToJson(t *testing.T) {
@@ -69,10 +69,10 @@ func TestFlatten_ToJson(t *testing.T) {
 		},
 		"dca": []interface{}{
 			[]interface{}{
-				1,2,3,
+				1, 2, 3,
 			},
 			[]interface{}{
-				4,5,6,
+				4, 5, 6,
 			},
 		},
 	}
@@ -89,8 +89,7 @@ func TestFlatten_ToJson(t *testing.T) {
 		t.Error(err)
 	}
 
-
-	assert.Equal(t, data.ToJson(), string(testedDataJson))
+	assert.Equal(t, string(testedDataJson), data.ToJson())
 }
 
 func TestFlatten_ToNested(t *testing.T) {
@@ -112,10 +111,10 @@ func TestFlatten_ToNested(t *testing.T) {
 		},
 		"dca": []interface{}{
 			[]interface{}{
-				1,2,3,
+				1, 2, 3,
 			},
 			[]interface{}{
-				4,5,6,
+				4, 5, 6,
 			},
 		},
 	}
@@ -126,11 +125,11 @@ func TestFlatten_ToNested(t *testing.T) {
 		t.Error(err)
 	}
 
-	assert.Equal(t, data.ToNested(), testedMap)
+	assert.Equal(t, testedMap, data.ToNested())
 }
 
 func TestNewFlatten(t *testing.T) {
-	assert.IsTypef(t, NewFlatten(), &Flatten{}, "")
+	assert.IsTypef(t, &Flatten{}, NewFlatten(), "")
 }
 
 func TestNewFlattenFromJson(t *testing.T) {
@@ -143,7 +142,7 @@ func TestNewFlattenFromJson(t *testing.T) {
 	}
 
 	assert.Equal(t, data.Get("test"), "a")
-	assert.IsType(t, &Flatten{}, data.Get("test01.a"))
+	assert.IsType(t, data.Get("test01.a"), &Flatten{})
 }
 
 func TestNewFlattenFromMapFlatten(t *testing.T) {
@@ -158,9 +157,9 @@ func TestNewFlattenFromMapFlatten(t *testing.T) {
 		t.Error(err)
 	}
 
-	assert.IsType(t, &Flatten{}, data.Get("test01.a"))
-	assert.Equal(t, data.Get("test"), "a")
-	assert.Equal(t, data.Get("test01.a.avt"), "hi")
+	assert.IsType(t, data.Get("test01.a"), &Flatten{})
+	assert.Equal(t, "a", data.Get("test"))
+	assert.Equal(t, "hi", data.Get("test01.a.avt"))
 }
 
 func TestNewFlattenFromMapNested(t *testing.T) {
@@ -180,8 +179,8 @@ func TestNewFlattenFromMapNested(t *testing.T) {
 	}
 
 	assert.IsType(t, &Flatten{}, data.Get("test01.a"))
-	assert.Equal(t, data.Get("test"), "a")
-	assert.Equal(t, data.Get("test01.a.avt"), "hi")
+	assert.Equal(t, "a", data.Get("test"))
+	assert.Equal(t, "hi", data.Get("test01.a.avt"))
 }
 
 func BenchmarkNewFlatten(b *testing.B) {
@@ -232,10 +231,10 @@ func BenchmarkNewFlattenFromMap(b *testing.B) {
 		},
 		"dca": []interface{}{
 			[]interface{}{
-				1,2,3,
+				1, 2, 3,
 			},
 			[]interface{}{
-				4,5,6,
+				4, 5, 6,
 			},
 		},
 	}
@@ -271,10 +270,10 @@ func BenchmarkFlatten_Get(b *testing.B) {
 		},
 		"dca": []interface{}{
 			[]interface{}{
-				1,2,3,
+				1, 2, 3,
 			},
 			[]interface{}{
-				4,5,6,
+				4, 5, 6,
 			},
 		},
 	}
@@ -312,10 +311,10 @@ func BenchmarkFlatten_Get_ParentPart(b *testing.B) {
 		},
 		"dca": []interface{}{
 			[]interface{}{
-				1,2,3,
+				1, 2, 3,
 			},
 			[]interface{}{
-				4,5,6,
+				4, 5, 6,
 			},
 		},
 	}
@@ -353,10 +352,10 @@ func BenchmarkFlatten_ToNested(b *testing.B) {
 		},
 		"dca": []interface{}{
 			[]interface{}{
-				1,2,3,
+				1, 2, 3,
 			},
 			[]interface{}{
-				4,5,6,
+				4, 5, 6,
 			},
 		},
 	}
@@ -394,10 +393,10 @@ func BenchmarkFlatten_ToJson(b *testing.B) {
 		},
 		"dca": []interface{}{
 			[]interface{}{
-				1,2,3,
+				1, 2, 3,
 			},
 			[]interface{}{
-				4,5,6,
+				4, 5, 6,
 			},
 		},
 	}
@@ -508,7 +507,6 @@ func BenchmarkFlatten_Get_ParentBigData(b *testing.B) {
 	}
 
 	flatten, _ := NewFlattenFromMap(*testingData)
-
 
 	b.ReportAllocs()
 	b.ResetTimer()

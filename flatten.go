@@ -11,12 +11,16 @@ var (
 )
 
 type Flatten struct {
+	namespace string
+	delimiter string
 	container map[string]interface{}
 	keyStore  map[string][]string
 }
 
 func NewFlatten() *Flatten {
 	return &Flatten{
+		namespace: "",
+		delimiter: ".",
 		container: map[string]interface{}{},
 		keyStore:  map[string][]string{},
 	}
@@ -62,13 +66,31 @@ func NewFlattenFromJson(data string) (*Flatten, error) {
 	return result, nil
 }
 
-func (f Flatten) Add(key string, value interface{}) {
+func (f *Flatten) SetDelimiter(delimiter string) *Flatten {
+	f.delimiter = delimiter
+
+	return f
+}
+
+func (f *Flatten) SetNamespace(prefix string) *Flatten {
+	f.namespace = prefix
+
+	return f
+}
+
+func (f *Flatten) Add(key string, value interface{}) *Flatten {
+	key = makeKey(f.namespace, key)
+
 	f.container[key] = value
 
 	f.metaKeyAdd(key)
+
+	return f
 }
 
-func (f Flatten) Get(key string) interface{} {
+func (f *Flatten) Get(key string) interface{} {
+	key = makeKey(f.namespace, key)
+
 	if _, ok := f.keyStore[key]; !ok {
 		return nil
 	}
@@ -80,13 +102,19 @@ func (f Flatten) Get(key string) interface{} {
 	flat := NewFlatten()
 
 	for _, value := range f.keyStore[key] {
-		flat.Add(value[len(key)+1:], f.container[value])
+		if len(f.namespace) > 0 {
+			key = key[len(f.namespace)+1:]
+		}
+
+		flat.Add(value[len(key):], f.container[value])
 	}
 
 	return flat
 }
 
 func (f Flatten) Delete(key string) {
+	key = makeKey(f.namespace, key)
+
 	delete(f.container, key)
 	f.metaKeyDelete(key)
 

@@ -112,6 +112,20 @@ func (f *Flatten) Get(key string) interface{} {
 	return flat
 }
 
+func (f *Flatten) All() map[string]interface{} {
+	result := map[string]interface{}{}
+
+	for key, value := range f.container {
+		if len(f.namespace) > 0 {
+			key = key[len(f.namespace)+1:]
+		}
+
+		result[key] = value
+	}
+
+	return result
+}
+
 func (f Flatten) Delete(key string) {
 	key = makeKey(f.namespace, key)
 

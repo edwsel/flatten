@@ -1,4 +1,4 @@
-package flatten_access
+package flatten
 
 type Merge struct {
 	source []*Flatten

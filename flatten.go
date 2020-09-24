@@ -106,7 +106,7 @@ func (f *Flatten) Get(key string) interface{} {
 			key = key[len(f.namespace)+1:]
 		}
 
-		flat.Add(value[len(key):], f.container[value])
+		flat.Add(value[len(key)+1:], f.container[value])
 	}
 
 	return flat

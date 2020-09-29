@@ -134,8 +134,8 @@ func (f Flatten) Delete(key string) {
 
 }
 
-func (f *Flatten) ToJson() string {
-	data, err := json.Marshal(f.ToNested())
+func (f *Flatten) ToJson(withNamespace bool) string {
+	data, err := json.Marshal(f.ToNested(withNamespace))
 
 	if err != nil {
 		return ""
@@ -144,8 +144,8 @@ func (f *Flatten) ToJson() string {
 	return string(data)
 }
 
-func (f *Flatten) ToNested() interface{} {
-	return nested(f.container)
+func (f *Flatten) ToNested(withNamespace bool) interface{} {
+	return nested(f.All(withNamespace))
 }
 
 func (f *Flatten) metaKeyAdd(key string) {

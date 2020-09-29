@@ -79,8 +79,6 @@ func (f *Flatten) SetNamespace(prefix string) *Flatten {
 }
 
 func (f *Flatten) Add(key string, value interface{}) *Flatten {
-	key = makeKey(f.namespace, key)
-
 	f.container[key] = value
 
 	f.metaKeyAdd(key)
@@ -89,8 +87,6 @@ func (f *Flatten) Add(key string, value interface{}) *Flatten {
 }
 
 func (f *Flatten) Get(key string) interface{} {
-	key = makeKey(f.namespace, key)
-
 	if _, ok := f.keyStore[key]; !ok {
 		return nil
 	}
@@ -102,10 +98,6 @@ func (f *Flatten) Get(key string) interface{} {
 	flat := NewFlatten()
 
 	for _, value := range f.keyStore[key] {
-		if len(f.namespace) > 0 {
-			key = key[len(f.namespace)+1:]
-		}
-
 		flat.Add(value[len(key)+1:], f.container[value])
 	}
 
@@ -116,7 +108,7 @@ func (f *Flatten) All(withNamespace bool) map[string]interface{} {
 	result := map[string]interface{}{}
 
 	for key, value := range f.container {
-		if len(f.namespace) > 0 && !withNamespace {
+		if len(f.namespace) > 0 && withNamespace {
 			key = key[len(f.namespace)+1:]
 		}
 

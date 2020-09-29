@@ -89,7 +89,45 @@ func TestFlatten_ToJson(t *testing.T) {
 		t.Error(err)
 	}
 
-	assert.Equal(t, string(testedDataJson), data.ToJson())
+	assert.Equal(t, string(testedDataJson), data.ToJson(false))
+}
+
+func TestFlatten_ToJsonWithNamespace(t *testing.T) {
+	testedMap := map[string]interface{}{
+		"test": "a",
+		"test01": map[string]interface{}{
+			"avt": "hi",
+		},
+		"abc": []interface{}{
+			map[string]interface{}{
+				"qw": 1,
+			},
+			map[string]interface{}{
+				"qw": 2,
+			},
+			map[string]interface{}{
+				"qw": 3,
+			},
+		},
+		"dca": []interface{}{
+			[]interface{}{
+				1, 2, 3,
+			},
+			[]interface{}{
+				4, 5, 6,
+			},
+		},
+	}
+
+	data, err := NewFlattenFromMap(testedMap)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	data.SetNamespace("test.namespace")
+
+	assert.Equal(t, "{\"test\":{\"namespace\":{\"abc\":[{\"qw\":1},{\"qw\":2},{\"qw\":3}],\"dca\":[[1,2,3],[4,5,6]],\"test\":\"a\",\"test01\":{\"avt\":\"hi\"}}}}", data.ToJson(true))
 }
 
 func TestFlatten_ToNested(t *testing.T) {
@@ -125,7 +163,7 @@ func TestFlatten_ToNested(t *testing.T) {
 		t.Error(err)
 	}
 
-	assert.Equal(t, testedMap, data.ToNested())
+	assert.Equal(t, testedMap, data.ToNested(true))
 }
 
 func TestNewFlatten(t *testing.T) {
@@ -366,7 +404,7 @@ func BenchmarkFlatten_ToNested(b *testing.B) {
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
-		r = flatten.ToNested()
+		r = flatten.ToNested(true)
 	}
 
 	BenchmarkResult = r
@@ -407,7 +445,7 @@ func BenchmarkFlatten_ToJson(b *testing.B) {
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
-		r = flatten.ToJson()
+		r = flatten.ToJson(true)
 	}
 
 	BenchmarkResult = r

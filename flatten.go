@@ -109,7 +109,7 @@ func (f *Flatten) All(withNamespace bool) map[string]interface{} {
 
 	for key, value := range f.container {
 		if len(f.namespace) > 0 && withNamespace {
-			key = key[len(f.namespace)+1:]
+			key = f.namespace + "." + key
 		}
 
 		result[key] = value

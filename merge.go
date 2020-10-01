@@ -32,7 +32,7 @@ func (m *Merge) Compile() Flatten {
 }
 
 func mergeValue(left Flatten, right Flatten) Flatten {
-	for key, rightVal := range right.container {
+	for key, rightVal := range right.All(true) {
 		left.Add(key, rightVal)
 	}
 

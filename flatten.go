@@ -3,7 +3,6 @@ package flatten
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strings"
 )
 
@@ -88,8 +87,6 @@ func (f *Flatten) SetNamespace(prefix string) *Flatten {
 }
 
 func (f *Flatten) Add(key string, value interface{}) *Flatten {
-	fmt.Println(f.container, f.container[key], key, value)
-
 	f.container[key] = value
 
 	f.metaKeyAdd(key)

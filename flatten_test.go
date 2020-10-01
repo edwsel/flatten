@@ -127,7 +127,11 @@ func TestFlatten_ToJsonWithNamespace(t *testing.T) {
 
 	data.SetNamespace("test.namespace")
 
-	assert.Equal(t, "{\"test\":{\"namespace\":{\"abc\":[{\"qw\":1},{\"qw\":2},{\"qw\":3}],\"dca\":[[1,2,3],[4,5,6]],\"test\":\"a\",\"test01\":{\"avt\":\"hi\"}}}}", data.ToJson(true))
+	assert.Equal(
+		t,
+		"{\"test\":{\"namespace\":{\"abc\":[{\"qw\":1},{\"qw\":2},{\"qw\":3}],\"dca\":[[1,2,3],[4,5,6]],\"test\":\"a\",\"test01\":{\"avt\":\"hi\"}}}}",
+		data.ToJson(true),
+	)
 }
 
 func TestFlatten_ToNested(t *testing.T) {

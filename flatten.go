@@ -66,10 +66,18 @@ func NewFlattenFromJson(data string) (*Flatten, error) {
 	return result, nil
 }
 
+func (f *Flatten) GetDelimiter() string {
+	return f.delimiter
+}
+
 func (f *Flatten) SetDelimiter(delimiter string) *Flatten {
 	f.delimiter = delimiter
 
 	return f
+}
+
+func (f *Flatten) GetNamespace() string {
+	return f.namespace
 }
 
 func (f *Flatten) SetNamespace(prefix string) *Flatten {

@@ -1,5 +1,7 @@
 package flatten
 
+import "fmt"
+
 type Merge struct {
 	source []*Flatten
 }
@@ -16,25 +18,27 @@ func (m *Merge) Compile() *Flatten {
 	}
 
 	sourceLen := len(m.source)
-	result := NewFlatten()
+	result := *NewFlatten()
 
 	for index, source := range m.source {
 		if index == 0 && (index+1) >= sourceLen {
-			result = mergeValue(source, m.source[index+1])
+			result = mergeValue(*source, *m.source[index+1])
 		} else if index == 1 {
 			continue
 		} else {
-			result = mergeValue(result, source)
+			result = mergeValue(result, *source)
 		}
 	}
 
-	return result
+	return &result
 }
 
-func mergeValue(left *Flatten, right *Flatten) *Flatten {
+func mergeValue(left Flatten, right Flatten) Flatten {
 	for rightKey, rightVal := range right.All(true) {
 		left.Add(rightKey, rightVal)
 	}
+
+	fmt.Println(left.All(false))
 
 	return left
 }

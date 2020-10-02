@@ -95,15 +95,15 @@ func (f *Flatten) Add(key string, value interface{}) *Flatten {
 }
 
 func (f *Flatten) Get(key string) interface{} {
+	flat := NewFlatten()
+
 	if _, ok := f.keyStore[key]; !ok {
-		return nil
+		return NewFlatten()
 	}
 
 	if val, ok := f.container[key]; len(f.keyStore[key]) == 1 && ok {
 		return val
 	}
-
-	flat := NewFlatten()
 
 	for _, value := range f.keyStore[key] {
 		flat.Add(value[len(key)+1:], f.container[value])

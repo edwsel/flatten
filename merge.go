@@ -1,7 +1,5 @@
 package flatten
 
-import "fmt"
-
 type Merge struct {
 	source []*Flatten
 }
@@ -37,8 +35,6 @@ func mergeValue(left Flatten, right Flatten) Flatten {
 	for rightKey, rightVal := range right.All(true) {
 		left.Add(rightKey, rightVal)
 	}
-
-	fmt.Println(left.All(false))
 
 	return left
 }

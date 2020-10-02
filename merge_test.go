@@ -7,20 +7,18 @@ import (
 
 func TestMerge_Compile(t *testing.T) {
 	firstElem, _ := NewFlattenFromMap(map[string]interface{}{
-		"root.1.test": "aaa",
-		"root.2.test": "bbb",
-		"root.3.test": "bbb",
+		"root.0.test": "aaa",
 	})
 
 	secondElem, _ := NewFlattenFromMap(map[string]interface{}{
-		"root.1.test": map[string]interface{}{
+		"root.0.test": map[string]interface{}{
 			"abc": "100",
 		},
 	})
 
 	result := NewMerge(firstElem, secondElem).Compile()
 
-	fmt.Printf("%+v\n", result)
+	fmt.Printf("%+v\n", result.ToNested(true))
 }
 
 func Benchmark_Merge_Compile_2Map(b *testing.B) {
@@ -99,4 +97,3 @@ func Benchmark_Merge_Compile_4Map(b *testing.B) {
 		NewMerge(firstElem, secondElem, thirdElem, fourthElem).Compile()
 	}
 }
-

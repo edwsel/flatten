@@ -87,11 +87,24 @@ func (f *Flatten) SetNamespace(prefix string) *Flatten {
 }
 
 func (f *Flatten) Add(key string, value interface{}) *Flatten {
+	sliceKey := strings.Split(key, f.delimiter)
+
+	for index, _ := range sliceKey {
+		subKey := strings.Join(sliceKey[:index+1], ".")
+		if _, ok := f.keyStore[subKey]; ok && len(f.keyStore[subKey]) == 1 {
+			f.Delete(subKey)
+		}
+	}
+
 	f.container[key] = value
 
 	f.metaKeyAdd(key)
 
 	return f
+}
+
+func (f *Flatten) Has(key string) bool {
+	return false
 }
 
 func (f *Flatten) Get(key string) interface{} {

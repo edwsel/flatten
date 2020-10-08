@@ -5,15 +5,15 @@ import (
 	"strings"
 )
 
-func flatten(flatMap map[string]interface{}, nested interface{}, key string) error {
+func flatten(flatMap map[string]interface{}, nested interface{}, key string, delimiter string) error {
 	assign := func(newKey string, value interface{}) error {
 		switch value.(type) {
 		case map[string]interface{}:
-			if err := flatten(flatMap, value.(map[string]interface{}), newKey); err != nil {
+			if err := flatten(flatMap, value.(map[string]interface{}), newKey, delimiter); err != nil {
 				return err
 			}
 		case []interface{}:
-			if err := flatten(flatMap, value.([]interface{}), newKey); err != nil {
+			if err := flatten(flatMap, value.([]interface{}), newKey, delimiter); err != nil {
 				return err
 			}
 		default:
@@ -26,7 +26,7 @@ func flatten(flatMap map[string]interface{}, nested interface{}, key string) err
 	switch nested.(type) {
 	case map[string]interface{}:
 		for k, v := range nested.(map[string]interface{}) {
-			newKey := makeFlattenKey(key, k)
+			newKey := makeFlattenKey(key, k, delimiter)
 			err := assign(newKey, v)
 
 			if err != nil {
@@ -35,7 +35,7 @@ func flatten(flatMap map[string]interface{}, nested interface{}, key string) err
 		}
 	case []interface{}:
 		for k, v := range nested.([]interface{}) {
-			newKey := makeFlattenKey(key, strconv.Itoa(k))
+			newKey := makeFlattenKey(key, strconv.Itoa(k), delimiter)
 
 			err := assign(newKey, v)
 
@@ -50,11 +50,11 @@ func flatten(flatMap map[string]interface{}, nested interface{}, key string) err
 	return nil
 }
 
-func nested(flat map[string]interface{}) interface{} {
+func nested(flat map[string]interface{}, delimiter string) interface{} {
 	var result interface{}
 
 	for key, value := range flat {
-		subKeys := strings.Split(key, ".")
+		subKeys := strings.Split(key, delimiter)
 		result = makeNested(result, subKeys, value)
 	}
 
@@ -103,12 +103,12 @@ func makeNested(nested interface{}, subKeys []string, value interface{}) interfa
 	return nested
 }
 
-func makeFlattenKey(key string, subKey string) string {
+func makeFlattenKey(key string, subKey string, delimiter string) string {
 	if key == "" {
 		return subKey
 	}
 
-	return key + "." + subKey
+	return key + delimiter + subKey
 }
 
 func makeKey(prefix string, key string) string {
@@ -118,4 +118,3 @@ func makeKey(prefix string, key string) string {
 
 	return key
 }
-

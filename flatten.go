@@ -32,8 +32,9 @@ func NewFlatten() *Flatten {
 
 func NewFlattenFromMap(data interface{}, delimiter string) (*Flatten, error) {
 	result := NewFlatten()
+	result.delimiter = delimiter
 
-	err := flatten(result.container, data, "")
+	err := flatten(result.container, data, "", delimiter)
 
 	if err != nil {
 		return nil, err
@@ -46,7 +47,7 @@ func NewFlattenFromMap(data interface{}, delimiter string) (*Flatten, error) {
 	return result, nil
 }
 
-func NewFlattenFromJson(data string) (*Flatten, error) {
+func NewFlattenFromJson(data string, delimiter string) (*Flatten, error) {
 	dataMap := make(map[string]interface{})
 
 	err := json.Unmarshal([]byte(data), &dataMap)
@@ -57,7 +58,7 @@ func NewFlattenFromJson(data string) (*Flatten, error) {
 
 	result := NewFlatten()
 
-	err = flatten(result.container, dataMap, "")
+	err = flatten(result.container, dataMap, "", delimiter)
 
 	if err != nil {
 		return nil, err
@@ -103,7 +104,7 @@ func (f *Flatten) Add(key string, value interface{}) *Flatten {
 	switch value.(type) {
 	case map[interface{}]interface{}, []interface{}:
 		newData := map[string]interface{}{}
-		err := flatten(newData, value, key)
+		err := flatten(newData, value, key, f.delimiter)
 
 		if err != nil {
 			break
@@ -176,7 +177,7 @@ func (f *Flatten) ToJson(withNamespace bool) string {
 }
 
 func (f *Flatten) ToNested(withNamespace bool) interface{} {
-	return nested(f.All(withNamespace))
+	return nested(f.All(withNamespace), f.delimiter)
 }
 
 func (f *Flatten) metaKeyAdd(key string) {

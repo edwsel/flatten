@@ -3,6 +3,7 @@ package flatten
 import (
 	"encoding/json"
 	"errors"
+	"reflect"
 	"strings"
 )
 
@@ -101,8 +102,9 @@ func (f *Flatten) Add(key string, value interface{}) *Flatten {
 		}
 	}
 
-	switch value.(type) {
-	case map[interface{}]interface{}, []interface{}:
+	v := reflect.ValueOf(value)
+	switch v.Kind() {
+	case reflect.Slice, reflect.Map:
 		newData := map[string]interface{}{}
 		err := flatten(newData, value, key, f.delimiter)
 

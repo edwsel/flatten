@@ -100,7 +100,21 @@ func (f *Flatten) Add(key string, value interface{}) *Flatten {
 		}
 	}
 
-	f.container[key] = value
+	switch value.(type) {
+	case map[interface{}]interface{}, []interface{}:
+		newData := map[string]interface{}{}
+		err := flatten(newData, value, key)
+
+		if err != nil {
+			break
+		}
+
+		for newKey, newVal := range newData {
+			f.container[newKey] = newVal
+		}
+	default:
+		f.container[key] = value
+	}
 
 	f.metaKeyAdd(key)
 

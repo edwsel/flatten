@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+const (
+	DEFAULT_DELIMITER = "."
+)
+
 var (
 	NotValidInputError = errors.New("not valid input error")
 )
@@ -20,13 +24,13 @@ type Flatten struct {
 func NewFlatten() *Flatten {
 	return &Flatten{
 		namespace: "",
-		delimiter: ".",
+		delimiter: DEFAULT_DELIMITER,
 		container: map[string]interface{}{},
 		keyStore:  map[string][]string{},
 	}
 }
 
-func NewFlattenFromMap(data interface{}) (*Flatten, error) {
+func NewFlattenFromMap(data interface{}, delimiter string) (*Flatten, error) {
 	result := NewFlatten()
 
 	err := flatten(result.container, data, "")
@@ -90,7 +94,7 @@ func (f *Flatten) Add(key string, value interface{}) *Flatten {
 	sliceKey := strings.Split(key, f.delimiter)
 
 	for index, _ := range sliceKey {
-		subKey := strings.Join(sliceKey[:index+1], ".")
+		subKey := strings.Join(sliceKey[:index+1], f.delimiter)
 		if _, ok := f.keyStore[subKey]; ok && len(f.keyStore[subKey]) == 1 {
 			f.Delete(subKey)
 		}
@@ -130,7 +134,7 @@ func (f *Flatten) All(withNamespace bool) map[string]interface{} {
 
 	for key, value := range f.container {
 		if len(f.namespace) > 0 && withNamespace {
-			key = f.namespace + "." + key
+			key = f.namespace + f.delimiter + key
 		}
 
 		result[key] = value
@@ -162,14 +166,14 @@ func (f *Flatten) ToNested(withNamespace bool) interface{} {
 }
 
 func (f *Flatten) metaKeyAdd(key string) {
-	subKeys := strings.Split(key, ".")
+	subKeys := strings.Split(key, f.delimiter)
 
 	if len(subKeys) == 1 && !f.metaKeyExist(subKeys[0], key) {
 		f.keyStore[subKeys[0]] = []string{key}
 	}
 
 	for index := range subKeys {
-		sliceSubKey := strings.Join(subKeys[:index+1], ".")
+		sliceSubKey := strings.Join(subKeys[:index+1], f.delimiter)
 
 		if !f.metaKeyExist(sliceSubKey, key) {
 			f.keyStore[sliceSubKey] = append(f.keyStore[sliceSubKey], key)
@@ -190,14 +194,14 @@ func (f *Flatten) metaKeyExist(subKey string, key string) bool {
 }
 
 func (f *Flatten) metaKeyDelete(key string) {
-	subKeys := strings.Split(key, ".")
+	subKeys := strings.Split(key, f.delimiter)
 
 	if len(subKeys) == 1 && !f.metaKeyExist(subKeys[0], key) {
 		f.keyStore[subKeys[0]] = []string{key}
 	}
 
 	for index := range subKeys {
-		sliceSubKey := strings.Join(subKeys[:index+1], ".")
+		sliceSubKey := strings.Join(subKeys[:index+1], f.delimiter)
 
 		if _, ok := f.keyStore[sliceSubKey]; ok {
 			for index, value := range f.keyStore[sliceSubKey] {

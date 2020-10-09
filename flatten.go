@@ -173,7 +173,11 @@ func (f Flatten) Delete(key string) {
 }
 
 func (f Flatten) Keys(namespace string) []string {
-	return f.keyStore[namespace]
+	if namespace == "" {
+		return f.keyStore[namespace]
+	}
+
+	return f.keyStore[""+namespace]
 }
 
 func (f *Flatten) ToJson(withNamespace bool) string {

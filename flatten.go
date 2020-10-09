@@ -177,7 +177,7 @@ func (f Flatten) Keys(namespace string) []string {
 		return f.keyStore[namespace]
 	}
 
-	return f.keyStore[""+namespace]
+	return f.keyStore[f.delimiter+namespace]
 }
 
 func (f *Flatten) ToJson(withNamespace bool) string {

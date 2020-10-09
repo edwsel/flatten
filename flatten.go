@@ -128,6 +128,10 @@ func (f *Flatten) Has(key string) bool {
 	return false
 }
 
+func Key() {
+
+}
+
 func (f *Flatten) Get(key string) interface{} {
 	flat := NewFlatten()
 
@@ -168,6 +172,10 @@ func (f Flatten) Delete(key string) {
 
 }
 
+func (f Flatten) Keys(namespace string) []string {
+	return f.keyStore[namespace]
+}
+
 func (f *Flatten) ToJson(withNamespace bool) string {
 	data, err := json.Marshal(f.ToNested(withNamespace))
 
@@ -184,6 +192,8 @@ func (f *Flatten) ToNested(withNamespace bool) interface{} {
 
 func (f *Flatten) metaKeyAdd(key string) {
 	subKeys := strings.Split(key, f.delimiter)
+
+	subKeys = append([]string{""}, subKeys...)
 
 	if len(subKeys) == 1 && !f.metaKeyExist(subKeys[0], key) {
 		f.keyStore[subKeys[0]] = []string{key}

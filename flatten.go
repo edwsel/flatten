@@ -223,6 +223,8 @@ func (f *Flatten) metaKeyExist(subKey string, key string) bool {
 func (f *Flatten) metaKeyDelete(key string) {
 	subKeys := strings.Split(key, f.delimiter)
 
+	subKeys = append([]string{""}, subKeys...)
+
 	if len(subKeys) == 1 && !f.metaKeyExist(subKeys[0], key) {
 		f.keyStore[subKeys[0]] = []string{key}
 	}

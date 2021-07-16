@@ -12,9 +12,9 @@ var BenchmarkResult interface{}
 func TestFlatten_Add(t *testing.T) {
 	flat := NewFlatten()
 
-	flat.Add("test.abs.1", "yep")
+	flat.Add("test", "yep")
 
-	assert.Equal(t, "yep", flat.Get("test.abs.1"))
+	assert.Equal(t, "yep", flat.Get("test"))
 }
 
 func TestFlatten_Delete(t *testing.T) {
@@ -26,7 +26,7 @@ func TestFlatten_Delete(t *testing.T) {
 
 	flat.Delete("test.abs.1")
 
-	assert.Equal(t, nil, flat.Get("test.abs.1"))
+	assert.Equal(t, EmptyData{}, flat.Get("test.abs.1"))
 }
 
 func TestFlatten_Get(t *testing.T) {
@@ -39,7 +39,7 @@ func TestFlatten_Get(t *testing.T) {
 		},
 	}
 
-	data, err := NewFlattenFromMap(testedMap)
+	data, err := NewFlattenFromMap(testedMap, ".")
 
 	if err != nil {
 		t.Error(err)
@@ -77,7 +77,7 @@ func TestFlatten_ToJson(t *testing.T) {
 		},
 	}
 
-	data, err := NewFlattenFromMap(testedMap)
+	data, err := NewFlattenFromMap(testedMap, ".")
 
 	if err != nil {
 		t.Error(err)
@@ -119,7 +119,7 @@ func TestFlatten_ToJsonWithNamespace(t *testing.T) {
 		},
 	}
 
-	data, err := NewFlattenFromMap(testedMap)
+	data, err := NewFlattenFromMap(testedMap, ".")
 
 	if err != nil {
 		t.Error(err)
@@ -161,7 +161,7 @@ func TestFlatten_ToNested(t *testing.T) {
 		},
 	}
 
-	data, err := NewFlattenFromMap(testedMap)
+	data, err := NewFlattenFromMap(testedMap, ".")
 
 	if err != nil {
 		t.Error(err)
@@ -177,7 +177,7 @@ func TestNewFlatten(t *testing.T) {
 func TestNewFlattenFromJson(t *testing.T) {
 	testedString := "{\"test\": \"a\",\"test01\": {\"a\": {\"avt\": \"hi\"}}\n}"
 
-	data, err := NewFlattenFromJson(testedString)
+	data, err := NewFlattenFromJson(testedString, ".")
 
 	if err != nil {
 		t.Error(err)
@@ -193,7 +193,7 @@ func TestNewFlattenFromMapFlatten(t *testing.T) {
 		"test01.a.avt": "hi",
 	}
 
-	data, err := NewFlattenFromMap(testedMap)
+	data, err := NewFlattenFromMap(testedMap, ".")
 
 	if err != nil {
 		t.Error(err)
@@ -214,7 +214,7 @@ func TestNewFlattenFromMapNested(t *testing.T) {
 		},
 	}
 
-	data, err := NewFlattenFromMap(testedMap)
+	data, err := NewFlattenFromMap(testedMap, ".")
 
 	if err != nil {
 		t.Error(err)
@@ -246,7 +246,7 @@ func BenchmarkNewFlattenFromJson(b *testing.B) {
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
-		r, _ = NewFlattenFromJson(testData)
+		r, _ = NewFlattenFromJson(testData, ".")
 	}
 
 	BenchmarkResult = r
@@ -285,7 +285,7 @@ func BenchmarkNewFlattenFromMap(b *testing.B) {
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
-		r, _ = NewFlattenFromMap(testedMap)
+		r, _ = NewFlattenFromMap(testedMap, ".")
 	}
 
 	BenchmarkResult = r
@@ -320,7 +320,7 @@ func BenchmarkFlatten_Get(b *testing.B) {
 		},
 	}
 
-	flatten, _ := NewFlattenFromMap(testedMap)
+	flatten, _ := NewFlattenFromMap(testedMap, ".")
 
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -361,7 +361,7 @@ func BenchmarkFlatten_Get_ParentPart(b *testing.B) {
 		},
 	}
 
-	flatten, _ := NewFlattenFromMap(testedMap)
+	flatten, _ := NewFlattenFromMap(testedMap, ".")
 
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -402,7 +402,7 @@ func BenchmarkFlatten_ToNested(b *testing.B) {
 		},
 	}
 
-	flatten, _ := NewFlattenFromMap(testedMap)
+	flatten, _ := NewFlattenFromMap(testedMap, ".")
 
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -443,7 +443,7 @@ func BenchmarkFlatten_ToJson(b *testing.B) {
 		},
 	}
 
-	flatten, _ := NewFlattenFromMap(testedMap)
+	flatten, _ := NewFlattenFromMap(testedMap, ".")
 
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -468,7 +468,7 @@ func BenchmarkNewFlattenFromJson_BigData(b *testing.B) {
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
-		r, _ = NewFlattenFromJson(string(testingJson))
+		r, _ = NewFlattenFromJson(string(testingJson), ".")
 	}
 
 	BenchmarkResult = r
@@ -495,7 +495,7 @@ func BenchmarkNewFlattenFromMap_BigData(b *testing.B) {
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
-		r, _ = NewFlattenFromMap(*testingData)
+		r, _ = NewFlattenFromMap(*testingData, ".")
 	}
 
 	BenchmarkResult = r
@@ -518,7 +518,7 @@ func BenchmarkFlatten_Get_BigData(b *testing.B) {
 		b.Error(err)
 	}
 
-	flatten, _ := NewFlattenFromMap(*testingData)
+	flatten, _ := NewFlattenFromMap(*testingData, ".")
 
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -548,7 +548,7 @@ func BenchmarkFlatten_Get_ParentBigData(b *testing.B) {
 		b.Error(err)
 	}
 
-	flatten, _ := NewFlattenFromMap(*testingData)
+	flatten, _ := NewFlattenFromMap(*testingData, ".")
 
 	b.ReportAllocs()
 	b.ResetTimer()

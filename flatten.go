@@ -11,6 +11,8 @@ const (
 	DEFAULT_DELIMITER = "."
 )
 
+type EmptyData struct{}
+
 var (
 	NotValidInputError = errors.New("not valid input error")
 )
@@ -124,7 +126,15 @@ func (f *Flatten) Add(key string, value interface{}) *Flatten {
 	return f
 }
 
-func (f *Flatten) Has(key string) bool {
+func (f *Flatten) Has(namespace string) bool {
+	if _, ok := f.keyStore[namespace]; namespace == "" && ok {
+		return true
+	}
+
+	if _, ok := f.keyStore[f.delimiter+namespace]; ok {
+		return true
+	}
+
 	return false
 }
 
@@ -132,19 +142,23 @@ func Key() {
 
 }
 
-func (f *Flatten) Get(key string) interface{} {
+func (f *Flatten) Get(namespace string) interface{} {
 	flat := NewFlatten()
 
-	if _, ok := f.keyStore[key]; !ok {
-		return NewFlatten()
+	if _, ok := f.keyStore[namespace]; namespace == "" && ok {
+		return *f
 	}
 
-	if val, ok := f.container[key]; len(f.keyStore[key]) == 1 && ok {
+	if _, ok := f.keyStore[f.delimiter+namespace]; !ok {
+		return EmptyData{}
+	}
+
+	if val, ok := f.container[namespace]; len(f.keyStore[f.delimiter+namespace]) == 1 && ok {
 		return val
 	}
 
-	for _, value := range f.keyStore[key] {
-		flat.Add(value[len(key)+1:], f.container[value])
+	for _, value := range f.keyStore[f.delimiter+namespace] {
+		flat.Add(value[len(namespace)+1:], f.container[value])
 	}
 
 	return flat

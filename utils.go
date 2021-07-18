@@ -1,42 +1,53 @@
 package flatten
 
 import (
+	"errors"
+	"reflect"
 	"strconv"
 	"strings"
 )
 
 func flatten(flatMap map[string]interface{}, nested interface{}, key string, delimiter string) error {
-	assign := func(newKey string, value interface{}) error {
-		switch value.(type) {
-		case map[string]interface{}:
-			if err := flatten(flatMap, value.(map[string]interface{}), newKey, delimiter); err != nil {
-				return err
-			}
-		case []interface{}:
-			if err := flatten(flatMap, value.([]interface{}), newKey, delimiter); err != nil {
+	assign := func(newKey string, value reflect.Value) error {
+		switch value.Kind() {
+		case reflect.Map, reflect.Array, reflect.Slice:
+			if err := flatten(flatMap, value.Interface(), newKey, delimiter); err != nil {
 				return err
 			}
 		default:
-			flatMap[newKey] = value
+			flatMap[newKey] = value.Interface()
 		}
 
 		return nil
 	}
 
-	switch nested.(type) {
-	case map[string]interface{}:
-		for k, v := range nested.(map[string]interface{}) {
-			newKey := makeFlattenKey(key, k, delimiter)
+	rNested := reflect.ValueOf(nested)
+
+	switch rNested.Kind() {
+	case reflect.Map:
+		rangeRNested := rNested.MapRange()
+
+		for rangeRNested.Next() {
+			k := rangeRNested.Key()
+			v := rangeRNested.Value()
+
+			if k.Kind() != reflect.String {
+				return errors.New("key type must be a string")
+			}
+
+			newKey := makeFlattenKey(key, k.String(), delimiter)
 			err := assign(newKey, v)
 
 			if err != nil {
 				return err
 			}
 		}
-	case []interface{}:
-		for k, v := range nested.([]interface{}) {
-			newKey := makeFlattenKey(key, strconv.Itoa(k), delimiter)
+	case reflect.Slice, reflect.Array:
 
+		for i := 0; i < rNested.Len(); i++ {
+			v := rNested.Index(i)
+
+			newKey := makeFlattenKey(key, strconv.Itoa(i), delimiter)
 			err := assign(newKey, v)
 
 			if err != nil {

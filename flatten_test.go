@@ -255,29 +255,18 @@ func BenchmarkNewFlattenFromJson(b *testing.B) {
 func BenchmarkNewFlattenFromMap(b *testing.B) {
 	var r *Flatten
 
-	testedMap := map[string]interface{}{
-		"test": "a",
-		"test01": map[string]interface{}{
-			"avt": "hi",
+	testedMap := map[string]map[string]string{
+		"a": {
+			"a1": "1",
+			"a2": "1",
+			"a3": "1",
+			"a4": "1",
 		},
-		"abc": []interface{}{
-			map[string]interface{}{
-				"qw": 1,
-			},
-			map[string]interface{}{
-				"qw": 2,
-			},
-			map[string]interface{}{
-				"qw": 3,
-			},
-		},
-		"dca": []interface{}{
-			[]interface{}{
-				1, 2, 3,
-			},
-			[]interface{}{
-				4, 5, 6,
-			},
+		"b": {
+			"b1": "1",
+			"b2": "1",
+			"b3": "1",
+			"b4": "1",
 		},
 	}
 

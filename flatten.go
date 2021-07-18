@@ -39,6 +39,8 @@ func NewFlattenFromMap(data interface{}, delimiter string) (*Flatten, error) {
 
 	err := flatten(result.container, data, "", delimiter)
 
+	//fmt.Printf("%+v\n", result.container)
+
 	if err != nil {
 		return nil, err
 	}
